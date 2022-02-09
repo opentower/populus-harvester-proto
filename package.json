@@ -1,0 +1,23 @@
+{
+  "name": "populus-harvester-proto",
+  "version": "1.0.0",
+  "description": "prototype OAI harverster for populus",
+  "main": "index.js",
+  "bin": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Graham Leach-Krouse",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "leveldown": "^6.1.0",
+    "levelup": "^5.1.1",
+    "memdown": "^6.1.1",
+    "oai-pmh": "^2.0.3",
+    "search-index": "^3.0.2",
+    "sqldown": "^2.1.0",
+    "sqlite": "^4.0.23",
+    "sqlite3": "^5.0.2"
+  }
+}
