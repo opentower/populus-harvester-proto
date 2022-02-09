@@ -1,19 +1,29 @@
 import si from 'search-index' // https://github.com/fergiemcdowall/search-index
 // *very* weird bug, importing oai-pmh before search-index causes a segfault
 import pkg from 'oai-pmh' // https://github.com/paperhive/oai-pmh
+import * as fs from 'fs/promises'
+
 const { OaiPmh } = pkg
 
 console.log("initializing...")
 
-const { PUT, FLUSH, DELETE, QUERY, ALL_DOCUMENTS, DOCUMENT_COUNT } = await si()
+const { PUT, DELETE, DOCUMENT_COUNT } = await si()
 
-//await FLUSH()
+var lastRun 
+
+try {
+  const msecs = await fs.readFile('lastRun.txt')
+  lastRun = new Date(parseInt(msecs.toString(), 10))
+} catch {
+  lastRun = new Date("1990-01-01")
+}
 
 async function main () {
+   const dateNow = Date.now()
    const oaiPmh = new OaiPmh('http://philarchive.org/oai.pl')
    const recordIterator = oaiPmh.listRecords({
      metadataPrefix: 'oai_dc',
-     from: "2022-02-09"
+     from: lastRun.toISOString()
    })
    const options = {
      storeVectors: true
@@ -60,6 +70,7 @@ async function main () {
        })
        chunk.length = 0
      }
+     await fs.writeFile('lastRun.txt',dateNow.toString())
    }
    await PUT(chunk, options)
    console.log(`count: ${count}, total ${total}, deletions ${deletions}`)
