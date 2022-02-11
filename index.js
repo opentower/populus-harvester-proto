@@ -2,12 +2,13 @@ import si from 'search-index' // https://github.com/fergiemcdowall/search-index
 // *very* weird bug, importing oai-pmh before search-index causes a segfault
 import pkg from 'oai-pmh' // https://github.com/paperhive/oai-pmh
 import * as fs from 'fs/promises'
+import http from 'http'
 
 const { OaiPmh } = pkg
 
 console.log("initializing...")
 
-const { PUT, DELETE, DOCUMENT_COUNT } = await si()
+const { PUT, DELETE, QUERY, DOCUMENT_COUNT } = await si()
 
 var lastRun 
 
@@ -18,16 +19,15 @@ try {
   lastRun = new Date("1990-01-01")
 }
 
-async function main () {
+async function retrieve() {
    const dateNow = Date.now()
    const oaiPmh = new OaiPmh('http://philarchive.org/oai.pl')
-   const recordIterator = oaiPmh.listRecords({
+   let recordIterator
+   recordIterator = oaiPmh.listRecords({
      metadataPrefix: 'oai_dc',
      from: lastRun.toISOString()
    })
-   const options = {
-     storeVectors: true
-   }
+   const options = { storeVectors: true } 
    let count = 0 
    let deletions = 0 
    let total = 0
@@ -70,10 +70,50 @@ async function main () {
        })
        chunk.length = 0
      }
-     await fs.writeFile('lastRun.txt',dateNow.toString())
    }
    await PUT(chunk, options)
    console.log(`count: ${count}, total ${total}, deletions ${deletions}`)
+   await fs.writeFile('lastRun.txt',dateNow.toString())
 }
 
-main().catch(console.error)
+function safeRetrieve() {
+  retrieve().catch(e => {
+    switch (e.name) {
+      case "TypeError" : {
+        console.log("hitting upstream bug for 1-entry reponses")
+        return
+      }
+      case "OaiPmhError" : {
+        console.log("no records available")
+        return
+      }
+      default : throw e
+    }
+  })
+}
+
+setInterval(safeRetrieve, 10000)
+
+const server = http.createServer((req,res) => {
+  switch (req.method) {
+    case "POST": {
+      let data = ""
+      req.on('data', chunk => data += chunk)
+      req.on('end', _ => {
+        const query = JSON.parse(data)
+        res.statusCode = 200
+        QUERY(query).then(result => {
+          res.write(JSON.stringify(result))
+          res.end()
+        })
+      })
+      break
+    }
+    default: {
+      res.statusCode = 405 //method not allowed
+      res.end()
+    }
+  }
+})
+
+server.listen(8080)
