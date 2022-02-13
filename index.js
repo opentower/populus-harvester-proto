@@ -5,7 +5,7 @@ import QueryServer from './queryServer.js'
  
 console.log("initializing...")
 
-const { PUT, QUERY, DELETE, DOCUMENT_COUNT } = await si()
+const { PUT, QUERY, DELETE, DOCUMENT_COUNT } = await si({name: "storage/fii"})
 
 const harvester = new Harvester({ PUT, DELETE, DOCUMENT_COUNT })
 
