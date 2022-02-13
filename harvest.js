@@ -26,7 +26,6 @@ export default class Harvester {
       metadataPrefix: 'oai_dc',
       from: lastRun.toISOString()
     })
-    const options = { storeVectors: true } 
     let count = 0 
     let deletions = 0 
     let total = 0
@@ -63,16 +62,21 @@ export default class Harvester {
         console.log(`count: ${count}, total ${total}, deletions ${deletions}`)
       }
       if (chunk.length > 25) {
-        const results = await this.PUT(chunk, options)
-        results.map(rslt => {
-          if (rslt.status !== "CREATED") console.log(rslt)
-        })
+        await this.saveChunk(chunk)
         chunk.length = 0
       }
     }
-    await this.PUT(chunk, options)
+    await this.saveChunk(chunk)
     console.log(`count: ${count}, total ${total}, deletions ${deletions}`)
     await fs.writeFile('lastRun.txt',dateNow.toString())
+  }
+
+  async saveChunk(chunk) {
+    const options = { storeVectors: true } 
+    const results = await this.PUT(chunk, options)
+    results.map(rslt => {
+      if (rslt.status !== "CREATED") console.log(rslt)
+    })
   }
 
   safeHarvest = _ => {
