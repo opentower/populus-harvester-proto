@@ -11,12 +11,17 @@ export default class QueryServer {
         let data = ""
         req.on('data', chunk => data += chunk)
         req.on('end', _ => {
-          const query = JSON.parse(data)
-          res.statusCode = 200
-          this.QUERY(query).then(result => {
-            res.write(JSON.stringify(result))
+          try {
+            const query = JSON.parse(data)
+            res.statusCode = 200
+            this.QUERY(query).then(result => {
+              res.write(JSON.stringify(result))
+              res.end()
+            })
+          } catch {
+            res.statusCode = 400
             res.end()
-          })
+          }
         })
         break
       }

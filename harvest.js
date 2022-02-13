@@ -1,4 +1,3 @@
-import si from 'search-index' // https://github.com/fergiemcdowall/search-index
 import pkg from 'oai-pmh' // https://github.com/paperhive/oai-pmh
 import * as fs from 'fs/promises'
 const { OaiPmh } = pkg
@@ -12,7 +11,6 @@ export default class Harvester {
 
   harvest = async _ => {
     let lastRun 
-    const msecs = await fs.readFile('lastRun.txt')
     try {
       const msecs = await fs.readFile('lastRun.txt')
       lastRun = new Date(parseInt(msecs.toString(), 10))
@@ -68,7 +66,7 @@ export default class Harvester {
     }
     await this.saveChunk(chunk)
     console.log(`count: ${count}, total ${total}, deletions ${deletions}`)
-    await fs.writeFile('lastRun.txt',dateNow.toString())
+    await fs.writeFile('lastRun.txt', dateNow.toString())
   }
 
   async saveChunk(chunk) {
