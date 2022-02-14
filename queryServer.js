@@ -15,7 +15,6 @@ export default class QueryServer {
             const data = JSON.parse(data)
             res.statusCode = 200
             this.QUERY(data.query, data.opts).then(result => {
-              res.setHeader("Access-Control-Allow-Origin","*")
               res.write(JSON.stringify(result))
               res.end()
             })
@@ -29,6 +28,7 @@ export default class QueryServer {
       case "OPTIONS": {
         res.setHeader("Access-Control-Allow-Origin","*")
         res.setHeader("Access-Control-Allow-Methods","POST")
+        res.setHeader("Access-Control-Allow-Headers","*")
         res.setHeader("Access-Control-Max-Age","600")
         res.end()
       }
