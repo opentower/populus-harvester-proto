@@ -3,21 +3,13 @@ import si from 'search-index' // https://github.com/fergiemcdowall/search-index
 import Harvester from './harvest.js'
 import QueryServer from './queryServer.js'
 
-var initCount = 1
- 
-async function initialize() {
-  console.log(`initializing, take ${initCount}...`)
-  try { 
-    const db = await si({name: "storage/fii"}) 
-    return db
-  }
-  catch { 
-    await new Promise(res => setTimeout(res, 1000))
-    return initialize()
-  }
-}
+console.log("warming up...")
 
-const { PUT, QUERY, DELETE, DOCUMENT_COUNT } = await initialize()
+await new Promise(res => setTimeout(res,10000))
+
+console.log("initializing...")
+
+const { PUT, QUERY, DELETE, DOCUMENT_COUNT } = await si({name: "storage/fii"})
 
 const harvester = new Harvester({ PUT, DELETE, DOCUMENT_COUNT })
 
