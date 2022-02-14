@@ -15,6 +15,7 @@ export default class QueryServer {
             const data = JSON.parse(data)
             res.statusCode = 200
             this.QUERY(data.query, data.opts).then(result => {
+              res.setHeader("Access-Control-Allow-Origin","*")
               res.write(JSON.stringify(result))
               res.end()
             })
