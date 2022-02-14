@@ -8,19 +8,20 @@ export default class QueryServer {
   handleRequest = (req,res) => {
     switch (req.method) {
       case "POST": {
-        let data = ""
-        req.on('data', chunk => data += chunk)
+        let dataRaw = ""
+        req.on('data', chunk => dataRaw += chunk)
         req.on('end', _ => {
-          console.log(`data ${data}`)
           try {
-            const data = JSON.parse(data)
+            const data = JSON.parse(dataRaw)
+            console.log(data)
             res.statusCode = 200
             this.QUERY(data.query, data.opts).then(result => {
               res.setHeader("Access-Control-Allow-Origin","*")
               res.write(JSON.stringify(result))
               res.end()
             })
-          } catch {
+          } catch(e) {
+            console.log(e)
             res.statusCode = 400
             res.end()
           }

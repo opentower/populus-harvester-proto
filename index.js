@@ -3,10 +3,6 @@ import si from 'search-index' // https://github.com/fergiemcdowall/search-index
 import Harvester from './harvest.js'
 import QueryServer from './queryServer.js'
 
-console.log("warming up...")
-
-await new Promise(res => setTimeout(res,10000))
-
 console.log("initializing...")
 
 const { PUT, QUERY, DELETE, DOCUMENT_COUNT } = await si({name: "storage/fii"})
