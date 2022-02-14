@@ -6,12 +6,14 @@ export default class QueryServer {
   }
 
   handleRequest = (req,res) => {
+    console.log(`got ${req.method}`)
     switch (req.method) {
       case "POST": {
         let data = ""
         req.on('data', chunk => data += chunk)
         req.on('end', _ => {
           try {
+            console.log(`data ${data}`)
             const data = JSON.parse(data)
             res.statusCode = 200
             this.QUERY(data.query, data.opts).then(result => {
