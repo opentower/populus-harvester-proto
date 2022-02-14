@@ -26,6 +26,12 @@ export default class QueryServer {
         })
         break
       }
+      case "OPTIONS": {
+        res.setHeader("Access-Control-Allow-Origin","*")
+        res.setHeader("Access-Control-Allow-Methods","POST")
+        res.setHeader("Access-Control-Max-Age","600")
+        res.end()
+      }
       default: {
         res.statusCode = 405 //method not allowed
         res.end()
