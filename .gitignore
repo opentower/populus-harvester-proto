@@ -123,6 +123,6 @@ Sessionx.vim
 dist/*.js
 dist/*.txt
 
-fii
+storage
 
 # End of https://www.toptal.com/developers/gitignore/api/node

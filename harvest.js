@@ -12,7 +12,7 @@ export default class Harvester {
   harvest = async _ => {
     let lastRun 
     try {
-      const msecs = await fs.readFile('lastRun.txt')
+      const msecs = await fs.readFile('storage/lastRun.txt')
       lastRun = new Date(parseInt(msecs.toString(), 10))
     } catch {
       lastRun = new Date("1990-01-01")
@@ -66,7 +66,7 @@ export default class Harvester {
     }
     await this.saveChunk(chunk)
     console.log(`count: ${count}, total ${total}, deletions ${deletions}`)
-    await fs.writeFile('lastRun.txt', dateNow.toString())
+    await fs.writeFile('storage/lastRun.txt', dateNow.toString())
   }
 
   async saveChunk(chunk) {

@@ -12,9 +12,10 @@ export default class QueryServer {
         req.on('data', chunk => data += chunk)
         req.on('end', _ => {
           try {
-            const query = JSON.parse(data)
+            const data = JSON.parse(data)
             res.statusCode = 200
-            this.QUERY(query).then(result => {
+            this.QUERY(data.query, data.opts).then(result => {
+              res.setHeader("Access-Control-Allow-Origin","*")
               res.write(JSON.stringify(result))
               res.end()
             })
