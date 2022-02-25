@@ -89,7 +89,7 @@ export default class Harvester {
           return
         }
         case "OaiPmhError" : {
-          console.log("no records available")
+          console.log(e)
           return
         }
         default : throw e
