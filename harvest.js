@@ -28,6 +28,7 @@ export default class Harvester {
     let deletions = 0 
     let total = 0
     const chunk = []
+    let lastHarvest
     for await (const record of recordIterator) {
       if (record.header?.['$']?.status === 'deleted') {
         deletions++
@@ -56,11 +57,14 @@ export default class Harvester {
         data.type = md?.["dc:type"] 
         chunk.push(data)
         count++
+        lastHarvest = record.header.datestamp
         total = await this.DOCUMENT_COUNT()
-        console.log(`count: ${count}, total ${total}, deletions ${deletions}`)
+        console.log(`count: ${count}, total ${total}, deletions ${deletions}, timestamp ${lastHarvest}`)
       }
       if (chunk.length > 25) {
+        const harvestDate = new Date(lastHarvest)
         await this.saveChunk(chunk)
+        await fs.writeFile('storage/lastRun.txt', harvestDate.getTime().toString() )
         chunk.length = 0
       }
     }
