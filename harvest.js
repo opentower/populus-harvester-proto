@@ -59,7 +59,7 @@ export default class Harvester {
         count++
         lastHarvest = record.header.datestamp
         total = await this.DOCUMENT_COUNT()
-        console.log(`count: ${count}, total ${total}, deletions ${deletions}, timestamp ${lastHarvest}`)
+        console.log(`count:${count} total:${total} deletions:${deletions} timestamp:${lastHarvest} id:${record.header.identifier}`)
       }
       if (chunk.length > 25) {
         await this.saveChunk(chunk)
