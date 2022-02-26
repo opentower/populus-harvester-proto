@@ -67,7 +67,7 @@ export default class Harvester {
       }
     }
     await this.saveChunk(chunk)
-    console.log(`count: ${count}, total ${total}, deletions ${deletions}`)
+    console.log("Run Complete.")
     await fs.writeFile('storage/lastRun.txt', dateNow.toString())
   }
 
