@@ -28,7 +28,6 @@ export default class Harvester {
     let deletions = 0 
     let total = 0
     const chunk = []
-    let lastHarvest
     for await (const record of recordIterator) {
       if (record.header?.['$']?.status === 'deleted') {
         deletions++
@@ -57,9 +56,10 @@ export default class Harvester {
         data.type = md?.["dc:type"] 
         chunk.push(data)
         count++
-        lastHarvest = record.header.datestamp
+        this.lastHarvest = record.header.datestamp
+        this.lastRecord = record.header.identifier
         total = await this.DOCUMENT_COUNT()
-        console.log(`count:${count} total:${total} deletions:${deletions} timestamp:${lastHarvest} id:${record.header.identifier}`)
+        console.log(`count:${count} total:${total} deletions:${deletions} timestamp:${this.lastHarvest} id:${record.header.identifier}`)
       }
       if (chunk.length > 25) {
         await this.saveChunk(chunk)
@@ -83,8 +83,10 @@ export default class Harvester {
     if (this.harvesting) return
     this.harvesting = true
     this.harvest()
-    .catch(e => {
+    .catch(async e => {
       this.harvesting = false
+      console.log("caught")
+      await fs.appendFile('storage/errors.txt', `\n${new Date().toString()}\nlast harvest:${this.lastHarvest}\nlast record:${this.lastRecord}\nstack: ${e.stack}`) 
       switch (e.name) {
         case "TypeError" : {
           console.log("hitting upstream bug for 1-entry reponses")

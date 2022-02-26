@@ -11,6 +11,8 @@ const harvester = new Harvester({ PUT, DELETE, DOCUMENT_COUNT })
 
 const server = new QueryServer({ QUERY })
 
+harvester.safeHarvest()
+
 setInterval(harvester.safeHarvest, 1200000) // every 20 minutes
 
 server.listen(5000)
