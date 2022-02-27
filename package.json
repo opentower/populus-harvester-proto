@@ -14,7 +14,7 @@
     "leveldown": "^6.1.0",
     "levelup": "^5.1.1",
     "memdown": "^6.1.1",
-    "oai-pmh": "^2.0.3",
+    "oai-pmh": "github:Paperpile/oai-pmh",
     "search-index": "^3.0.2",
     "sqldown": "^2.1.0",
     "sqlite": "^4.0.23",
