@@ -51,7 +51,7 @@ export default class Harvester {
             data.description = md?.["dc:description"] 
             data.format = md?.["dc:format"] 
             data.identifier = md?.["dc:identifier"] 
-            data._id = md?.["dc:identifier"] 
+            data._id = record.header.identifier 
             data.language = md?.["dc:language"] 
             data.publisher = md?.["dc:publisher"] 
             data.relation = md?.["dc:relation"] 
