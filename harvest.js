@@ -15,8 +15,8 @@ export default class Harvester {
       this.lastRun = new Date(parseInt(msecs.toString(), 10))
       this.nextRun = new Date(parseInt(msecs.toString(), 10))
     } catch {
-      this.lastRun = new Date("1990-01-01")
-      this.nextRun = new Date("1990-01-01")
+      this.lastRun = new Date("2008-01-01")
+      this.nextRun = new Date("2008-01-01")
     }
     const dateNow = Date.now()
     const oaiPmh = new OaiPmh('http://philarchive.org/oai.pl')
