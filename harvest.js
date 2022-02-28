@@ -24,6 +24,7 @@ export default class Harvester {
     let count = 0 
     let deletions = 0 
     let total = 0
+    let run = 0
     while (this.nextRun < dateNow) {
       this.lastRun = new Date(this.nextRun)
       this.nextRun.setTime(this.nextRun.getTime() + 2629800000) // one month
@@ -34,6 +35,7 @@ export default class Harvester {
       })
       const chunk = []
       try {
+        run = 0
         for await (const record of recordIterator) {
           if (record.header?.['$']?.status === 'deleted') {
             deletions++
@@ -65,7 +67,8 @@ export default class Harvester {
             this.lastHarvest = record.header.datestamp
             this.lastRecord = record.header.identifier
             total = await this.DOCUMENT_COUNT()
-            console.log(`count:${count} total:${total} deletions:${deletions} timestamp:${this.lastHarvest} id:${record.header.identifier}`)
+            run++
+            console.log(`count:${run}/${count} total:${total} deletions:${deletions} timestamp:${this.lastHarvest} id:${record.header.identifier}`)
           }
           if (chunk.length > 25) {
             await this.saveChunk(chunk)
@@ -73,8 +76,16 @@ export default class Harvester {
           }
         }
       } catch (e) {
-        if (e.code === "noRecordsMatch") console.log(`nothing for ${this.lastRun} to ${this.nextRun}`)
-        else throw e
+        if (e.code === "noRecordsMatch") {
+          console.log(`nothing for ${this.lastRun} to ${this.nextRun}`)
+          if (run > 0) await fs.appendFile('storage/errors.txt', 
+            `In-Run-noRecordsMatch at \n${new Date().toString()}` +
+            `\nlast harvest:${this.lastHarvest}` +
+            `\nlast record:${this.lastRecord}` +
+            `\nfrom:${this.lastRun}` +
+            `\nuntil:${this.lastRun}` +
+            `\nstack: ${e.stack}`) 
+        } else throw e
       }
       await this.saveChunk(chunk)
       await fs.writeFile('storage/lastRun.txt', this.lastRun.getTime().toString())
