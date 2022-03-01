@@ -27,7 +27,7 @@ export default class Harvester {
     let run = 0
     while (this.nextRun < dateNow) {
       this.lastRun = new Date(this.nextRun)
-      this.nextRun.setTime(this.nextRun.getTime() + 2629800000) // one month
+      this.nextRun.setTime(this.nextRun.getTime() +  86400000) // one day
       recordIterator = oaiPmh.listRecords({
         metadataPrefix: 'oai_dc',
         from: this.lastRun.toISOString(),
