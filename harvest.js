@@ -83,7 +83,7 @@ export default class Harvester {
             `\nlast harvest:${this.lastHarvest}` +
             `\nlast record:${this.lastRecord}` +
             `\nfrom:${this.lastRun}` +
-            `\nuntil:${this.lastRun}` +
+            `\nuntil:${this.nextRun}` +
             `\nstack: ${e.stack}`) 
         } else throw e
       }
@@ -111,7 +111,7 @@ export default class Harvester {
         `\nlast harvest:${this.lastHarvest}` +
         `\nlast record:${this.lastRecord}` +
         `\nfrom:${this.lastRun}` +
-        `\nuntil:${this.lastRun}` +
+        `\nuntil:${this.nextRun}` +
         `\nstack: ${e.stack}`) 
       switch (e.name) {
         case "TypeError" : {
