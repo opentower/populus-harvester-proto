@@ -26,7 +26,6 @@ export default class Harvester {
     let total = 0
     let run = 0
     while (this.nextRun < dateNow) {
-      this.lastRun = new Date(this.nextRun)
       this.nextRun.setTime(this.nextRun.getTime() +  86400000) // one day
       recordIterator = oaiPmh.listRecords({
         metadataPrefix: 'oai_dc',
@@ -75,6 +74,8 @@ export default class Harvester {
             chunk.length = 0
           }
         }
+        console.log(`Run from ${this.lastRun} to ${this.nextRun} Complete.`)
+        this.lastRun = new Date(this.nextRun) // only push start time after a successful run
       } catch (e) {
         if (e.code === "noRecordsMatch") {
           console.log(`nothing for ${this.lastRun} to ${this.nextRun}`)
@@ -89,7 +90,6 @@ export default class Harvester {
       }
       await this.saveChunk(chunk)
       await fs.writeFile('storage/lastRun.txt', this.lastRun.getTime().toString())
-      console.log(`Run from ${this.lastRun} to ${this.nextRun} Complete.`)
     }
     await fs.writeFile('storage/lastRun.txt', dateNow.toString())
   }
